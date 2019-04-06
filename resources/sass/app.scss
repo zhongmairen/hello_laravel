@@ -1,14 +1,10 @@
-
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
-
-// Variables
-@import 'variables';
-
-// Bootstrap
+//Bootstrap
 @import '~bootstrap/scss/bootstrap';
+body {
+    font-size: 14px;
+    font-weight: normal;
+}
 
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+nav.navbar.navbar-expand-lg {
+    margin-bottom: 20px;
 }
