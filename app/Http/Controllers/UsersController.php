@@ -41,12 +41,16 @@ class UsersController extends Controller
     //将查找到的用户实例 $user 与编辑视图进行绑定
     public function edit(User $user)
     {
+        //此 trait 提供了 authorize 方法，它可以被用于快速授权一个指定的行为，当无权限运行该行为时会抛出 HttpException。authorize 方法接收两个参数，第一个为授权策略的名称，第二个为进行授权验证的数据。
+        $this->authorize('update', $user);
         return view('users.edit',compact('user'));
     }
 
     //在用户控制器加上 update 动作来处理用户提交的个人信息
     public function update(User $user, Request $request)
     {
+        //同上
+        $this->authorize('update', $user);
         $this->validate($request, [
             'name' => 'required|max:50',
             'password' => 'required|confirmed|min:6'
@@ -60,7 +64,14 @@ class UsersController extends Controller
         $user->update($data);
         session()->flash('success', '个人资料更新成功！');
 
-        return redirect()->route('users.show', $user);
+        return redirect()->route('users.show', $user);//相当于$user->id
+    }
+
+    public function __construct()
+    {
+        $this->middleware('auth', [
+            'except' => ['show', 'create', 'store']
+        ]);
     }
 
 }
