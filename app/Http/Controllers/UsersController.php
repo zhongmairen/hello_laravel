@@ -7,7 +7,7 @@ use App\Models\User;
 use Auth;
 use Mail;
 
-#用户控制器UsersController
+#用户控制器UsersController里面是动作
 class UsersController extends Controller
 {
     //Auth 中间件，用户登录访问权限与策略控制器，排除以下动作，其它都不能操作
@@ -35,7 +35,11 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        return view('users.show',compact('user'));
+        $statuses = $user->statuses()
+                           ->orderBy('created_at', 'desc')
+                           ->paginate(10);
+        //compact 方法可以同时接收多个参数，在上面代码我们将用户数据 $user 和微博动态数据 $statuses 同时传递给用户个人页面的视图上。
+        return view('users.show', compact('user', 'statuses'));
     }
     #处理用户创建的相关逻辑,数据进行 validator()验证,第一个参数为用户的输入数据，第二个参数为该输入数据的验证规则
     public function store(Request $request)
