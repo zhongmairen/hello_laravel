@@ -1,5 +1,5 @@
 <?php
-
+// 用户控制器
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -37,6 +37,30 @@ class UsersController extends Controller
         Auth::login($user);
         session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');#session()用户注册成功后，在页面顶部位置显示注册成功的提示信息
         return redirect()->route('users.show', [$user]);
+    }
+    //将查找到的用户实例 $user 与编辑视图进行绑定
+    public function edit(User $user)
+    {
+        return view('users.edit',compact('user'));
+    }
+
+    //在用户控制器加上 update 动作来处理用户提交的个人信息
+    public function update(User $user, Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:50',
+            'password' => 'required|confirmed|min:6'
+        ]);
+
+        $data = [];
+        $data['name'] = $request->name;
+        if ($request->password) {
+            $data['password'] = bcrypt($request->password);
+        }
+        $user->update($data);
+        session()->flash('success', '个人资料更新成功！');
+
+        return redirect()->route('users.show', $user);
     }
 
 }

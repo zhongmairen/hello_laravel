@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+/*Bootstrap*/
+
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -10716,5 +10718,17 @@ section.user_info h1 {
   float: left;
   max-width: 50px;
   border-radius: 50%;
+}
+
+/* Users edit */
+
+.gravatar_edit {
+  margin: 15px auto;
+  text-align: center;
+}
+
+.gravatar_edit .gravatar {
+  float: none;
+  max-width: 100px;
 }
 
