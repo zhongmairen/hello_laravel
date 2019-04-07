@@ -9,6 +9,24 @@ use Auth;
 #用户控制器UsersController
 class UsersController extends Controller
 {
+    //Auth 中间件，访问控制器
+    public function __construct()
+    {
+        $this->middleware('auth', [
+            'except' => ['show', 'create', 'store','index']
+        ]);
+    }
+
+    //index 动作来允许游客访问
+    public function index()
+    {
+        //$users = User::all();未分页，全部显示
+        $users = User::paginate(10);//分页显示
+        return view('users.index', compact('users'));
+    }
+
+
+
     public function create()
     {
         return view('users.create');
@@ -67,11 +85,6 @@ class UsersController extends Controller
         return redirect()->route('users.show', $user);//相当于$user->id
     }
 
-    public function __construct()
-    {
-        $this->middleware('auth', [
-            'except' => ['show', 'create', 'store']
-        ]);
-    }
+
 
 }
