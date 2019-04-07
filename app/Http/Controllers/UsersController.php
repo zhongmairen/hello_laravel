@@ -24,7 +24,15 @@ class UsersController extends Controller
             'email' => 'required|email|unique:users|max:255',
             'password' => 'required|confirmed|min:6'
         ]);
-        return;
+        #store 方法接受一个 Illuminate\Http\Request 实例参数，我们可以使用该参数来获得用户的所有输入数据。如果我们的表单中包含一个 name 字段，则可以借助 Request 使用下面的这种方式来获取 name值
+        #将注册表单提交绑定路由到存储数据库
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+        session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');#session()用户注册成功后，在页面顶部位置显示注册成功的提示信息
+        return redirect()->route('users.show', [$user]);
     }
 
 }
