@@ -1,5 +1,5 @@
 <?php
-#Laravel 默认为我们生成了用户模型文件,文件夹路径
+#Laravel 使用artisan命令默认生成了用户模型文件,文件夹路径
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
@@ -27,6 +27,18 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    //creating 用于监听模型被创建之前的事件，created 用于监听模型被创建之后的事件
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($user)
+        {
+            $user->activation_token = str_random(30);
+
+        });
+    }
 
     /**
      * The attributes that should be cast to native types.

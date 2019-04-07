@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Auth;
+use Mail;
 
 #用户控制器UsersController
 class UsersController extends Controller
 {
-    //Auth 中间件，访问控制器
+    //Auth 中间件，用户登录访问权限与策略控制器，排除以下动作，其它都不能操作
     public function __construct()
     {
         $this->middleware('auth', [
-            'except' => ['show', 'create', 'store','index']
+            'except' => ['show', 'create', 'store','index','confirmEmail']
         ]);
     }
 
@@ -51,10 +52,10 @@ class UsersController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        #让用户注册成功后自动登录系统
-        Auth::login($user);
-        session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');#session()用户注册成功后，在页面顶部位置显示注册成功的提示信息
-        return redirect()->route('users.show', [$user]);
+        #让用户注册成功后自动发送验证邮件
+        $this->sendEmailConfirmationTo($user);
+        session()->flash('success', '验证邮件已发送到你的注册邮箱上，请注意查收。');
+        return redirect('/');//注册成功后重定向到首页
     }
     //将查找到的用户实例 $user 与编辑视图进行绑定
     public function edit(User $user)
@@ -93,6 +94,34 @@ class UsersController extends Controller
         $user->delete();
         session()->flash('success', '成功删除用户！');
         return back();
+    }
+
+    protected function sendEmailConfirmationTo($user)
+    {
+        $view = 'emails.confirm';
+        $data = compact('user');
+        $from = 'joyefly@example.com';
+        $name = 'Joyefly';
+        $to = $user->email;
+        $subject = "感谢注册成为 【微能平台】 用户！请确认你的邮箱。";
+
+        Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
+            $message->from($from, $name)->to($to)->subject($subject);
+        });
+    }
+
+    //confirm_email 路由对应的控制器方法 confirmEmail
+    public function confirmEmail($token)
+    {
+        $user = User::where('activation_token', $token)->firstOrFail();
+
+        $user->activated = true;
+        $user->activation_token = null;
+        $user->save();
+
+        Auth::login($user);
+        session()->flash('success', '恭喜你，激活成功！');
+        return redirect()->route('users.show', [$user]);
     }
 
 
