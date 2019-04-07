@@ -19,6 +19,7 @@ class UsersTableSeeder extends Seeder
         $user = User::find(1);
         $user->name = 'Joyefly';
         $user->email = 'Joyefly@example.com';
+        $user->is_admin = true;//设置第一个用户为主管理员，密码为默认密码
         $user->save();
     }
 }
