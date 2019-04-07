@@ -16,7 +16,7 @@ class StaticPagesController extends Controller
         $feed_items = [];
         //使用 Auth::check() 来检查用户是否已登录
         if (Auth::check()) {
-            //获取用户的微博动态
+            //
             $feed_items = Auth::user()->feed()->paginate(30);
         }
         return view('static_pages/home', compact('feed_items'));
