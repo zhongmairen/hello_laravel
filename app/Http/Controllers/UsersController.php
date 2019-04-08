@@ -127,5 +127,20 @@ class UsersController extends Controller
     }
 
 
+    //11.4用于显示用户关注人列表视图的方法
+    public function followings(User $user)
+        {
+            $users = $user->followings()->paginate(30);
+            $title = $user->name . '关注的人';
+            return view('users.show_follow', compact('users', 'title'));
+        }
+    //11.4用户显示粉丝列表的 followers 方法
+    public function followers(User $user)
+        {
+            $users = $user->followers()->paginate(30);
+            $title = $user->name . '的粉丝';
+            return view('users.show_follow', compact('users', 'title'));
+        }
+
 
 }

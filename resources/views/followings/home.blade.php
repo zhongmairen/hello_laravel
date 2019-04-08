@@ -4,6 +4,7 @@
   @if (Auth::check())
     <div class="row">
       <div class="col-md-8">
+        <!-- 局部视图样式：关注人数、粉丝数、微博发布数 -->
         <section class="status_form">
           @include('shared._status_form')
         </section>
@@ -15,7 +16,6 @@
         <section class="user_info">
           @include('shared._user_info', ['user' => Auth::user()])
         </section>
-        <!-- 用户个人信息的统计视图 -->
         <section class="stats mt-2">
           @include('shared._stats', ['user' => Auth::user()])
         </section>
