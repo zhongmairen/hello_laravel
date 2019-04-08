@@ -76,4 +76,43 @@ class User extends Authenticatable
         return $this->statuses()
                     ->orderBy('created_at', 'desc');
     }
+
+    //「多对多关系」粉丝关注模型
+    //粉丝关系列表
+    public function followers()
+    {
+        return $this->belongsToMany(User::Class, 'followers', 'user_id', 'follower_id');
+    }
+    //用户关注别人时用这个方法
+    public function followings()
+    {
+        return $this->belongsToMany(User::Class, 'followers', 'follower_id', 'user_id');
+    }
+
+    //实现用户的「关注」和「取消关注」的相关逻辑，具体在用户模型中定义关注（follow）和取消关注（unfollow）的方法如下
+    //「关注」
+    public function follow($user_ids)
+    {
+        //is_array 用于判断参数是否为数组，如果已经是数组，则没有必要再使用 compact 方法
+        if ( ! is_array($user_ids)) {
+            $user_ids = compact('user_ids');
+        }
+        //sync方法会自动获取数组中的 id
+        $this->followings()->sync($user_ids, false);
+    }
+    //「取消关注」
+    public function unfollow($user_ids)
+    {
+        if ( ! is_array($user_ids)) {
+            $user_ids = compact('user_ids');
+        }
+        //detach方法会自动获取数组中的 id
+        $this->followings()->detach($user_ids);
+    }
+
+    //判断当前登录的用户 A 是否关注了用户 B，代码实现逻辑很简单，我们只需判断用户 B 是否包含在用户 A 的关注人列表上即可。这里我们将用到 contains 方法来做判断。
+    public function isFollowing($user_id)
+    {
+        return $this->followings->contains($user_id);
+    }
 }
