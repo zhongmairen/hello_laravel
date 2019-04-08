@@ -1,10 +1,10 @@
-<!-- 为主页添加微博表单和当前用户个人信息。 -->
 @extends('layouts.default')
 
 @section('content')
   @if (Auth::check())
     <div class="row">
       <div class="col-md-8">
+        <!-- 局部视图样式：关注人数、粉丝数、微博发布数 -->
         <section class="status_form">
           @include('shared._status_form')
         </section>
@@ -15,6 +15,9 @@
       <aside class="col-md-4">
         <section class="user_info">
           @include('shared._user_info', ['user' => Auth::user()])
+        </section>
+        <section class="stats mt-2">
+          @include('shared._stats', ['user' => Auth::user()])
         </section>
       </aside>
     </div>
